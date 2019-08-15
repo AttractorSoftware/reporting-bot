@@ -2,4 +2,5 @@ flask
 werkzeug
 python-telegram-bot
 SQLAlchemy
+alembic
 Flask-Admin
