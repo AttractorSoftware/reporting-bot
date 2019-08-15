@@ -1,0 +1,10 @@
+-r requirements.txt
+
+ipython
+flake8
+autopep8
+rope
+pytest
+mock
+pytest-mock
+pytest-cov
