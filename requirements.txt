@@ -3,4 +3,6 @@ werkzeug
 python-telegram-bot
 SQLAlchemy
 alembic
+Flask-Script
+Flask-SqlAlchemy
 Flask-Admin
