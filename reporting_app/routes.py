@@ -1,5 +1,8 @@
-from reporting_app import app
+from flask import Blueprint
 
-@app.route('/')
+blueprint = Blueprint('reporting_app', __name__)
+
+
+@blueprint.route('/')
 def index():
-    return "Hello World"
+    return 'Hello World'
