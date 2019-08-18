@@ -1,0 +1,23 @@
+version: "3"
+services:
+  app:
+    build: .
+    image: app/children
+    restart: always
+    volumes:
+      - ./source/:/code
+    command: python3 package.py
+    ports:
+      - "8008:8008"
+    depends_on:
+      - botPostgres
+  botPostgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8099:8080
