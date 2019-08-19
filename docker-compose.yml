@@ -10,9 +10,11 @@ services:
     ports:
       - "8008:8008"
     depends_on:
-      - botPostgres
-  botPostgres:
-    image: postgres
+      - bot_postgres
+  bot_postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: example
