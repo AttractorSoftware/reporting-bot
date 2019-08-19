@@ -5,19 +5,19 @@ services:
     image: app/children
     restart: always
     volumes:
-      - ./source/:/code
-    command: python3 package.py
+      - ./app/:/app
+    command: python3 /app/package.py
     ports:
       - "8008:8008"
-    depends_on:
-      - bot_postgres
-  bot_postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile.postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: example
+#    depends_on:
+#      - bot_postgres
+#  bot_postgres:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.postgres
+#    restart: always
+#    environment:
+#      POSTGRES_PASSWORD: example
   adminer:
     image: adminer
     restart: always

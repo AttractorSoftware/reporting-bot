@@ -6,8 +6,8 @@ RUN mkdir /code
 
 WORKDIR /code
 
-COPY requirements.txt /code/
-ADD requirements.txt /code/
+COPY app/requirements.txt /code/
+ADD app/requirements.txt /code/
 
 # Install requirements
 RUN pip install --upgrade pip
