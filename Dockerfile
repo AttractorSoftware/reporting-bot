@@ -6,13 +6,13 @@ RUN mkdir /code
 
 WORKDIR /code
 
-COPY app/requirements.txt /code/
-ADD app/requirements.txt /code/
+COPY app/requirements.txt /app/
+ADD app/requirements.txt /app/
 
 # Install requirements
 RUN pip install --upgrade pip
 
-RUN pip install -r /code/requirements.txt
+RUN pip install -r /app/requirements.txt
 
 EXPOSE 8008
 
