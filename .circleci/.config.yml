@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+    working_directory: ~/reporting-bot
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            sudo pip install -r dev-requirements.txt
+      - run:
+          name: Run tests
+          command: pytest -svv tests --cov=reporting_app
