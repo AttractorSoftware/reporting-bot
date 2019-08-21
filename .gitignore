@@ -106,6 +106,8 @@ venv.bak/
 # project non used files
 data
 
+# tests data files
+test_data
 # IDE project settings files
 .idea
 .vscode
