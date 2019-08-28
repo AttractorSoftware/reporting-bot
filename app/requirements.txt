@@ -3,6 +3,8 @@ werkzeug
 python-telegram-bot
 SQLAlchemy
 alembic
+Flask-Migrate
 Flask-Script
 Flask-SqlAlchemy
 Flask-Admin
+psycopg2-binary
