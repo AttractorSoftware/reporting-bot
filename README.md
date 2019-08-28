@@ -10,6 +10,23 @@
 * Open `http://localhost:5000`
 * Profit
 
+## Developers guide
+```bash
+# install project dependencies
+pip install -r app/dev-requirements.txt
+
+# create database (only first time, in development mode creates sqlite3 file) before go to app directory
+cd app
+python manage.py db init
+
+# initialize new migrations (the command creates new migrations file)
+python manage.py db migrate
+
+# apply migrations to database
+python manage.py db upgrade
+
+```
+
 ## Further improvements
 
 [Use proper folder structure](https://github.com/hack4impact/flask-base)
