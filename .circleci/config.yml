@@ -12,4 +12,4 @@ jobs:
             sudo pip install -r app/dev-requirements.txt
       - run:
           name: Run tests
-          command: pytest -svv tests --cov=reporting_app
+          command: pytest -svv app/tests --cov=app/reporting_app
