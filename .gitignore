@@ -111,3 +111,4 @@ test_data
 # IDE project settings files
 .idea
 .vscode
+.devcontainer
