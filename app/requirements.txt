@@ -1,6 +1,6 @@
 flask
 werkzeug
-python-telegram-bot
+pyTelegramBotAPI
 SQLAlchemy
 alembic
 Flask-Migrate
