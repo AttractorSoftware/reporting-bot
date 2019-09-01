@@ -26,15 +26,33 @@ def email_handler(message):
 
 
 CHOICE = 'choice project'
+PROJECT_SUFFIX = 'project'
 
 
 def choice_checker(message):
     return message.text == CHOICE
 
 
-@bot.callback_query_handler(func=lambda message: message == CHOICE)
+@bot.message_handler(func=lambda message: message.text == CHOICE)
 def choice_project_hanlder(message):
-    bot.send_message(message.chat.id, 'Please choice your project')
+    projects_markup = create_projects_buttons()
+    bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
+
+
+def create_projects_buttons():
+    markup = types.InlineKeyboardMarkup()
+    for project in ['Keystone', 'Sametrica', 'Glimse', 'Garder']:
+        button = types.InlineKeyboardButton(project, callback_data=f'{project}-{PROJECT_SUFFIX}')
+        markup.add(button)
+    return markup
+
+
+@bot.callback_query_handler(func=lambda call: call.data.endswith(PROJECT_SUFFIX))
+def select_project_calback_query(call):
+    print('call ', call)
+    sended_message = f'You selected the "{call.data}" project'
+    bot.answer_callback_query(call.id, sended_message)
+    bot.send_message(call.message.chat.id, sended_message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -42,5 +60,6 @@ def send_message(message):
     bot.send_message(message.chat.id, 'Hello my friend. It is mock message.')
 
 
-print('bot started...')
-bot.polling()
+if __name__ == '__main__':
+    print('bot started...')
+    bot.polling()
