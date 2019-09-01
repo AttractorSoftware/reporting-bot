@@ -27,6 +27,7 @@ def email_handler(message):
 
 CHOICE = 'choice project'
 PROJECT_SUFFIX = 'project'
+TICKET_SUFFIX = 'tiket'
 
 
 def choice_checker(message):
@@ -48,10 +49,36 @@ def create_projects_buttons():
 
 
 @bot.callback_query_handler(func=lambda call: call.data.endswith(PROJECT_SUFFIX))
-def select_project_calback_query(call):
-    print('call ', call)
-    sended_message = f'You selected the "{call.data}" project'
+def select_project_callback_query(call):
+    print('project call ', call)
+    project_name = call.data.replace(f'-{PROJECT_SUFFIX}', '')
+    sended_message = f'You selected the "{project_name}" project.\n' + \
+        'Please select ticket, which assigned to you.'
     bot.answer_callback_query(call.id, sended_message)
+    tickets_markup = create_tikets_buttons()
+    bot.send_message(call.message.chat.id, sended_message, reply_markup=tickets_markup)
+
+
+def create_tikets_buttons():
+    markup = types.InlineKeyboardMarkup()
+    mock_tickets = [
+        ('CKL-114', 'Add some changes'),
+        ('TEST-3254', 'Fix tests fixtures for unit tests'),
+        ('GMP-478', 'Fix database data'),
+        ('PTSK-1145', 'Realize data science implementation for application\'s core')
+    ]
+    for ticket in mock_tickets:
+        code, title = ticket
+        button = types.InlineKeyboardButton(f'[{code}] - {title}', callback_data=f'{code}-{TICKET_SUFFIX}')
+        markup.add(button)
+    return markup
+
+
+@bot.callback_query_handler(func=lambda call: call.data.endswith(TICKET_SUFFIX))
+def select_ticket_callback_query(call):
+    print('call ', call)
+    ticket_code = call.data.replace(f'-{TICKET_SUFFIX}', '')
+    sended_message = f'You selected the  "{ticket_code}" ticket.'
     bot.send_message(call.message.chat.id, sended_message)
 
 
