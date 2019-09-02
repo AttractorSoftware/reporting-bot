@@ -52,11 +52,16 @@ def create_projects_buttons():
 def select_project_callback_query(call):
     print('project call ', call)
     project_name = call.data.replace(f'-{PROJECT_SUFFIX}', '')
-    sended_message = f'You selected the "{project_name}" project.\n' + \
-        'Please select ticket, which assigned to you.'
-    bot.answer_callback_query(call.id, sended_message)
     tickets_markup = create_tikets_buttons()
-    bot.send_message(call.message.chat.id, sended_message, reply_markup=tickets_markup)
+    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    choice_project_button = types.KeyboardButton('choice project')
+    new_report_button = types.KeyboardButton('new report')
+    markup.row(choice_project_button, new_report_button)
+    callback_message = f'You selected the "{project_name}" project.\n'
+    bot.answer_callback_query(call.id, callback_message)
+    bot.send_message(call.message.chat.id, callback_message, reply_markup=markup)
+    tickets_message = 'Please select ticket which assigned to you.'
+    bot.send_message(call.message.chat.id, tickets_message, reply_markup=tickets_markup)
 
 
 def create_tikets_buttons():
