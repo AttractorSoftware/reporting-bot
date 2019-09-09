@@ -18,7 +18,7 @@ class DevConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(Config.DATA_DIR, 'app.sqlite3'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    SECRET_KEY = 'development key'
 
 class TestConfig(Config):
     ENV = 'test'
