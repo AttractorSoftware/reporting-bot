@@ -5,6 +5,63 @@ token = os.environ['TELEGRAM_BOT_TOKEN']
 bot = TeleBot(token)
 
 
+CHOICE_PROJECT = 'choice project'
+NEW_REPORT = 'new report'
+PROJECT_SUFFIX = 'project'
+TICKET_SUFFIX = 'tiket'
+
+
+class Report(object):
+    def __init__(self):
+        self.code = ''
+        self.title = ''
+        self.comment = ''
+        self.tracked_time = ''
+        self.status = ''
+
+    def set_code(self, code):
+        self.code = code
+
+    def set_title(self, title):
+        self.title = title
+
+    def set_comment(self, title):
+        self.title = title
+
+
+class ReportSetter(object):
+    def __init__(self, report, steps):
+        self.report = report
+        self.steps = steps
+        self.step_index = 0
+        self._enabled = False
+
+    def reset_step(self):
+        self.step_index = 0
+
+    def is_finish(self):
+        return self.step_index >= len(self.steps)
+
+    def set_step(self, value):
+        current = self.steps[self.steps_index]
+        set_func = getattr(self.report, current)
+        set_func(value)
+        self.step_index += 1
+
+    def enable(self):
+        self._enabled = True
+
+    def disable(self):
+        self._enabled = False
+
+    def is_enabled(self):
+        return self._enabled
+
+
+REPORT_STEPS = ['set_code', 'set_title', 'set_comment']
+report_setter = ReportSetter(Report(), REPORT_STEPS)
+
+
 @bot.message_handler(commands=['hello'])
 def hello_handler(message):
     bot.reply_to(message, 'Howdy, how are you doing?')
@@ -25,16 +82,11 @@ def email_handler(message):
                      "Registration confirmation! We sent you an email. Please check your mailbox.")
 
 
-CHOICE = 'choice project'
-PROJECT_SUFFIX = 'project'
-TICKET_SUFFIX = 'tiket'
-
-
 def choice_checker(message):
-    return message.text == CHOICE
+    return message.text == CHOICE_PROJECT
 
 
-@bot.message_handler(func=lambda message: message.text == CHOICE)
+@bot.message_handler(func=lambda message: message.text == CHOICE_PROJECT)
 def choice_project_hanlder(message):
     projects_markup = create_projects_buttons()
     bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
@@ -79,6 +131,14 @@ def create_tikets_buttons():
     return markup
 
 
+@bot.message_handler(func=lambda message: message.text == NEW_REPORT)
+def new_report_callback_query(message):
+    report_setter.reset_step()
+    report_setter.enable() 
+    text = 'Please number(code) of ticket:'
+    bot.send_message(message.chat.id, text)
+
+
 @bot.callback_query_handler(func=lambda call: call.data.endswith(TICKET_SUFFIX))
 def select_ticket_callback_query(call):
     print('call ', call)
@@ -89,6 +149,10 @@ def select_ticket_callback_query(call):
 
 @bot.message_handler(content_types=['text'])
 def send_message(message):
+    if report_setter.is_enabled():
+        report_setter.set_step(message.text)
+        if report_setter.is_finish():
+            report_setter.disable()
     bot.send_message(message.chat.id, 'Hello my friend. It is mock message.')
 
 
