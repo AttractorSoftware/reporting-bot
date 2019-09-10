@@ -50,9 +50,12 @@ class ReportSetter(object):
 
     def set_step(self, value):
         current = self.steps[self.step_index]['action']
-        set_func = getattr(self.report, current)
-        set_func(value)
+        self._do_step(current, value)
         self.step_index += 1
+
+    def _do_step(self, current, value):
+        func = getattr(self.report, current)
+        return func(value)
 
     def get_message(self):
         return self.steps[self.step_index]['message']
