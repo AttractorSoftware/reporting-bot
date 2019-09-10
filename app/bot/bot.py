@@ -96,18 +96,36 @@ REPORT_STEPS = [
 report_setter = ReportSetter(Report(), REPORT_STEPS)
 
 
+commands = {
+    'start': 'Get used to the bot',
+    'register': 'Register in the reporting system',
+    'ping': 'Check if bot is responding',
+    'help': 'Help'
+}
+
+
+@bot.message_handler(commands=['start'])
+def start_handler(m):
+    help_handler(m)
+
+
+@bot.message_handler(commands=['help'])
+def help_handler(m):
+    help_text = "The following commands are available: \n"
+    for key in commands:
+        help_text += "/" + key + ": "
+        help_text += commands[key] + "\n"
+    bot.send_message(m.chat.id, help_text)
+
+
 @bot.message_handler(commands=['ping'])
-def clear_handler(message):
-    bot.reply_to(message, 'Still alive!')
-
-
-@bot.message_handler(commands=['hello'])
-def hello_handler(message):
-    bot.reply_to(message, 'Howdy, how are you doing?')
+def ping_handler(m):
+    bot.reply_to(m, 'Still alive!')
 
 
 @bot.message_handler(commands=['register'])
 def register_handler(message):
+    bot.send_message(message.chat.id, '/register command sent')
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     choice_project_button = types.KeyboardButton('choice project')
     markup.add(choice_project_button)
