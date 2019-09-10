@@ -96,6 +96,11 @@ REPORT_STEPS = [
 report_setter = ReportSetter(Report(), REPORT_STEPS)
 
 
+@bot.message_handler(commands=['ping'])
+def clear_handler(message):
+    bot.reply_to(message, 'Still alive!')
+
+
 @bot.message_handler(commands=['hello'])
 def hello_handler(message):
     bot.reply_to(message, 'Howdy, how are you doing?')
