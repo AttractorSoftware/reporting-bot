@@ -46,5 +46,5 @@ class Report(db.Model):
     user = db.relationship('User', foreign_keys='Report.user_id')
     task = db.relationship('Task', foreign_keys='Report.task_id')
 
-    # def __repr__(self):
-    #     return f'<id: {self.id}, ticket name: {self.task.code}>'
+    def __repr__(self):
+        return f'<id: {self.id}, ticket name: {self.task.code}>'
