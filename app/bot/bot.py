@@ -95,7 +95,7 @@ REPORT_STEPS = [
 ]
 report_setter = ReportSetter(Report(), REPORT_STEPS)
 
-
+EMAIL_REGEXP = r'([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)'
 commands = {
     'start': 'Get used to the bot',
     'register': 'Register in the reporting system',
@@ -127,9 +127,15 @@ def ping_handler(m):
 def register_handler(message):
     bot.send_message(message.chat.id, '/register command sent')
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    choice_project_button = types.KeyboardButton('choice project')
+    choice_project_button = types.KeyboardButton('/choice_project')
     markup.add(choice_project_button)
     bot.send_message(message.chat.id, "Please, enter your email:", reply_markup=markup)
+
+
+@bot.message_handler(commands=['choice_project'])
+def choice_project_handler(message):
+    projects_markup = create_projects_buttons()
+    bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
@@ -138,7 +144,6 @@ def command_default(m):
     bot.send_message(m.chat.id, "I don't understand \"" + m.text + "\"\nMaybe try the help page at /help")
 
 
-EMAIL_REGEXP = r'([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)'
 @bot.message_handler(regexp=EMAIL_REGEXP)
 def email_handler(message):
     bot.send_message(message.chat.id,
@@ -147,12 +152,6 @@ def email_handler(message):
 
 def choice_checker(message):
     return message.text == CHOICE_PROJECT
-
-
-@bot.message_handler(func=lambda message: message.text == CHOICE_PROJECT)
-def choice_project_hanlder(message):
-    projects_markup = create_projects_buttons()
-    bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
 
 
 def create_projects_buttons():
@@ -169,8 +168,10 @@ def select_project_callback_query(call):
     project_name = call.data.replace(f'-{PROJECT_SUFFIX}', '')
     tickets_markup = create_tikets_buttons()
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    choice_project_button = types.KeyboardButton('choice project')
+
+    choice_project_button = types.KeyboardButton('/choice_project')
     new_report_button = types.KeyboardButton('new report')
+
     markup.row(choice_project_button, new_report_button)
     callback_message = f'You selected the "{project_name}" project.\n'
     bot.answer_callback_query(call.id, callback_message)
