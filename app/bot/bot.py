@@ -187,7 +187,9 @@ def send_message(message):
         report_setter.set_step(message.text)
         if report_setter.is_finish():
             report_setter.disable()
-            bot.send_message(message.chat.id, 'Do you add new report? If yes please click to "new report" button.')
+            bot.send_message(
+                message.chat.id,
+                'Your report was saved. Do you add new report? If yes please click to "new report" button.')
         else:
             message_text = report_setter.get_message()
             bot.send_message(message.chat.id, message_text)
