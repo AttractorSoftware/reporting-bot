@@ -25,8 +25,14 @@ class Report(object):
     def set_title(self, title):
         self.title = title
 
-    def set_comment(self, title):
-        self.title = title
+    def set_comment(self, comment):
+        self.comment = comment
+
+    def set_time(self, time):
+        self.time = time
+
+    def set_status(self, status):
+        self.status = status
 
 
 class ReportSetter(object):
@@ -43,10 +49,13 @@ class ReportSetter(object):
         return self.step_index >= len(self.steps)
 
     def set_step(self, value):
-        current = self.steps[self.steps_index]
+        current = self.steps[self.step_index]['action']
         set_func = getattr(self.report, current)
         set_func(value)
         self.step_index += 1
+
+    def get_message(self):
+        return self.steps[self.step_index]['message']
 
     def enable(self):
         self._enabled = True
@@ -58,7 +67,29 @@ class ReportSetter(object):
         return self._enabled
 
 
-REPORT_STEPS = ['set_code', 'set_title', 'set_comment']
+REPORT_STEPS = [
+    {
+        'action': 'set_code',
+        'message': 'Please enter number(code) of ticket'
+    },
+    {
+        'action': 'set_title',
+        'message': 'Please enter title of ticket'
+    },
+    {
+        'action': 'set_comment',
+        'message': 'Please add comment about what did you do?'
+    },
+    {
+        'action': 'set_time',
+        'message': 'Please enter your time spent (Example 6h (six hours)' +
+        '3m(three minutes), 6.5h (six and a half hours))'
+    },
+    {
+        'action': 'set_status',
+        'message': 'Please enter status of ticket'
+    }
+]
 report_setter = ReportSetter(Report(), REPORT_STEPS)
 
 
@@ -134,8 +165,8 @@ def create_tikets_buttons():
 @bot.message_handler(func=lambda message: message.text == NEW_REPORT)
 def new_report_callback_query(message):
     report_setter.reset_step()
-    report_setter.enable() 
-    text = 'Please number(code) of ticket:'
+    report_setter.enable()
+    text = report_setter.get_message()
     bot.send_message(message.chat.id, text)
 
 
@@ -153,9 +184,12 @@ def send_message(message):
         report_setter.set_step(message.text)
         if report_setter.is_finish():
             report_setter.disable()
-    bot.send_message(message.chat.id, 'Hello my friend. It is mock message.')
+            bot.send_message(message.chat.id, 'Do you add new report? If yes please click to "new report" button.')
+        else:
+            message_text = report_setter.get_message()
+            bot.send_message(message.chat.id, message_text)
 
 
 if __name__ == '__main__':
-    print('bot started...')
+    print('bot is started...')
     bot.polling()
