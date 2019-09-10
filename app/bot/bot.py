@@ -5,7 +5,7 @@ token = os.environ['TELEGRAM_BOT_TOKEN']
 bot = TeleBot(token)
 
 
-CHOICE_PROJECT = 'choice project'
+SELECT_PROJECT = 'select project'
 NEW_REPORT = 'new report'
 PROJECT_SUFFIX = 'project'
 TICKET_SUFFIX = 'tiket'
@@ -127,13 +127,13 @@ def ping_handler(m):
 def register_handler(message):
     bot.send_message(message.chat.id, '/register command sent')
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    choice_project_button = types.KeyboardButton('/choice_project')
-    markup.add(choice_project_button)
+    select_project_button = types.KeyboardButton('/select_project')
+    markup.add(select_project_button)
     bot.send_message(message.chat.id, "Please, enter your email:", reply_markup=markup)
 
 
-@bot.message_handler(commands=['choice_project'])
-def choice_project_handler(message):
+@bot.message_handler(commands=['select_project'])
+def select_project_handler(message):
     projects_markup = create_projects_buttons()
     bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
 
@@ -150,8 +150,8 @@ def email_handler(message):
                      "Registration confirmation! We sent you an email. Please check your mailbox.")
 
 
-def choice_checker(message):
-    return message.text == CHOICE_PROJECT
+def select_checker(message):
+    return message.text == SELECT_PROJECT
 
 
 def create_projects_buttons():
@@ -169,10 +169,10 @@ def select_project_callback_query(call):
     tickets_markup = create_tikets_buttons()
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
 
-    choice_project_button = types.KeyboardButton('/choice_project')
+    select_project_button = types.KeyboardButton('/select_project')
     new_report_button = types.KeyboardButton('new report')
 
-    markup.row(choice_project_button, new_report_button)
+    markup.row(select_project_button, new_report_button)
     callback_message = f'You selected the "{project_name}" project.\n'
     bot.answer_callback_query(call.id, callback_message)
     bot.send_message(call.message.chat.id, callback_message, reply_markup=markup)
