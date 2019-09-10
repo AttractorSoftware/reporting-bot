@@ -132,6 +132,12 @@ def register_handler(message):
     bot.send_message(message.chat.id, "Please, enter your email:", reply_markup=markup)
 
 
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def command_default(m):
+    # this is the standard reply to a normal message
+    bot.send_message(m.chat.id, "I don't understand \"" + m.text + "\"\nMaybe try the help page at /help")
+
+
 EMAIL_REGEXP = r'([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)'
 @bot.message_handler(regexp=EMAIL_REGEXP)
 def email_handler(message):
