@@ -10,14 +10,14 @@ class Project(db.Model):
         return f'<id: {self.id}, name: {self.name}>'
 
 
-class Task(db.Model):
+class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(255), unique=True)
     description = db.Column(db.Text())
     project_id = db.Column(db.ForeignKey(Project.id))
 
-    project = db.relationship('Project', foreign_keys='Task.project_id')
+    project = db.relationship('Project', foreign_keys='Ticket.project_id')
 
     def __repr__(self):
         return f'<id: {self.id}, name: {self.name}>'
@@ -39,12 +39,12 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text())
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    task_id = db.Column(db.Integer, db.ForeignKey(Task.id))
+    ticket_id = db.Column(db.Integer, db.ForeignKey(Ticket.id))
     time_spent = db.Column(db.Integer)
     status = db.Column(db.String(30))
 
     user = db.relationship('User', foreign_keys='Report.user_id')
-    task = db.relationship('Task', foreign_keys='Report.task_id')
+    ticket = db.relationship('Ticket', foreign_keys='Report.ticket_id')
 
     def __repr__(self):
-        return f'<id: {self.id}, ticket name: {self.task.code}>'
+        return f'<id: {self.id}, ticket name: {self.ticket.code}>'
