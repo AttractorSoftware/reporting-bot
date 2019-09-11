@@ -161,7 +161,7 @@ def process_ticket_code_step(m):
         bot.send_message(m.chat.id, 'Ok, then add title for ticket:')
         bot.register_next_step_handler(m, process_ticket_title_step)
     except Exception as e:
-        bot.reply_to(m, 'ooops')
+        bot.reply_to(m, 'ooops - process_ticket_code_step')
 
 
 def process_ticket_title_step(m):
@@ -170,16 +170,16 @@ def process_ticket_title_step(m):
         title = m.text
         if chat_id not in user_dict:
             user_dict[chat_id] = {}
-        user_dict[chat_id]['title'] = title #???
-        bot.send_message(m.chat.id, f'Nice, now we can create ticket {user_dict[chat_id]["code"]} with title "{user_dict[chat_id]["title"]}"')
-        create_ticket(user_dict[chat_id]['code'], user_dict[chat_id]['title'])
+        code = user_dict[chat_id]['code']
+        bot.send_message(m.chat.id, f'Nice, now we can create ticket "{code}" with title "{title}"')
+        create_ticket(code, title)
         show_tickets(m)
     except Exception as e:
         bot.reply_to(m, 'ooops')
 
 
 def create_ticket(code, title):
-    pass
+    TICKETS.append((code, title))
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
