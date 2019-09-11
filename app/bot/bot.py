@@ -8,7 +8,7 @@ bot = TeleBot(token)
 SELECT_PROJECT = 'select project'
 NEW_REPORT = 'new report'
 PROJECT_SUFFIX = 'project'
-TICKET_SUFFIX = 'tiket'
+TICKET_SUFFIX = 'ticket'
 
 
 class Report(object):
@@ -102,6 +102,13 @@ commands = {
     'ping': 'Check if bot is responding',
     'help': 'Help'
 }
+TICKETS = [
+    ('CKL-114', 'Add some changes'),
+    ('TEST-3254', 'Fix tests fixtures for unit tests'),
+    ('GMP-478', 'Fix database data'),
+    ('PTSK-1145', 'Realize data science implementation for application\'s core')
+]
+user_dict = {}
 
 
 @bot.message_handler(commands=['start'])
@@ -138,6 +145,43 @@ def select_project_handler(message):
     bot.send_message(message.chat.id, 'Please select your project in list', reply_markup=projects_markup)
 
 
+@bot.message_handler(commands=['new_ticket'])
+def new_ticket_handler(m):
+    bot.send_message(m.chat.id, 'Please write ticket code down:')
+    bot.register_next_step_handler(m, process_ticket_code_step)
+
+
+def process_ticket_code_step(m):
+    try:
+        chat_id = m.chat.id
+        code = m.text
+        if chat_id not in user_dict:
+            user_dict[chat_id] = {}
+        user_dict[chat_id]['code'] = code
+        bot.send_message(m.chat.id, 'Ok, then add title for ticket:')
+        bot.register_next_step_handler(m, process_ticket_title_step)
+    except Exception as e:
+        bot.reply_to(m, 'ooops')
+
+
+def process_ticket_title_step(m):
+    try:
+        chat_id = m.chat.id
+        title = m.text
+        if chat_id not in user_dict:
+            user_dict[chat_id] = {}
+        user_dict[chat_id]['title'] = title #???
+        bot.send_message(m.chat.id, f'Nice, now we can create ticket {user_dict[chat_id]["code"]} with title "{user_dict[chat_id]["title"]}"')
+        create_ticket(user_dict[chat_id]['code'], user_dict[chat_id]['title'])
+        show_tickets(m)
+    except Exception as e:
+        bot.reply_to(m, 'ooops')
+
+
+def create_ticket(code, title):
+    pass
+
+
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def command_default(m):
     # this is the standard reply to a normal message
@@ -166,29 +210,30 @@ def create_projects_buttons():
 def select_project_callback_query(call):
     print('project call ', call)
     project_name = call.data.replace(f'-{PROJECT_SUFFIX}', '')
-    tickets_markup = create_tikets_buttons()
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    main_buttons_markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
 
-    select_project_button = types.KeyboardButton('/select_project')
-    new_report_button = types.KeyboardButton('new report')
+    select_project_button = types.KeyboardButton(f'/select_project ({project_name} selected)')
+    new_report_button = types.KeyboardButton('new report') # use command later
+    new_ticket_button = types.KeyboardButton('/new_ticket')
 
-    markup.row(select_project_button, new_report_button)
+    main_buttons_markup.row(select_project_button, new_report_button)
+    main_buttons_markup.row(new_ticket_button)
+
     callback_message = f'You selected the "{project_name}" project.\n'
     bot.answer_callback_query(call.id, callback_message)
-    bot.send_message(call.message.chat.id, callback_message, reply_markup=markup)
+    bot.send_message(call.message.chat.id, callback_message, reply_markup=main_buttons_markup)
+    show_tickets(call.message)
+
+
+def show_tickets(m):
     tickets_message = 'Please select ticket which assigned to you.'
-    bot.send_message(call.message.chat.id, tickets_message, reply_markup=tickets_markup)
+    tickets_markup = create_tickets_buttons()
+    bot.send_message(m.chat.id, tickets_message, reply_markup=tickets_markup)
 
 
-def create_tikets_buttons():
+def create_tickets_buttons():
     markup = types.InlineKeyboardMarkup()
-    mock_tickets = [
-        ('CKL-114', 'Add some changes'),
-        ('TEST-3254', 'Fix tests fixtures for unit tests'),
-        ('GMP-478', 'Fix database data'),
-        ('PTSK-1145', 'Realize data science implementation for application\'s core')
-    ]
-    for ticket in mock_tickets:
+    for ticket in TICKETS:
         code, title = ticket
         button = types.InlineKeyboardButton(f'[{code}] - {title}', callback_data=f'{code}-{TICKET_SUFFIX}')
         markup.add(button)
