@@ -208,7 +208,6 @@ class Spreadsheet:
 if __name__ == "__main__":
     CREDENTIALS_FILE = 'data/reporting-bot-google-api.json'
     sheet = Spreadsheet(CREDENTIALS_FILE)
-    # sheet.create_sheet('test_report2')
     sheet.set_spread_sheet_by_id('1AtVZBWVerxmlxNJCRmOSS_bDj1XdRWYMkIp1OLjI07U')
     sheet.share_with_email_for_writing('aibek.abdykasymov@gmail.com')
     sheet.share_with_email_for_writing('andrewshmelyov@gmail.com')
