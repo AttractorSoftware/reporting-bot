@@ -25,6 +25,14 @@ python manage.py db migrate
 # apply migrations to database
 python manage.py db upgrade
 
+# set WEBHOOK_HOST env variable in ~/.bashrc
+export WEBHOOK_HOST='somelongrandomname.serveo.net'
+
+# run proxy server in another terminal tab (you can use webhooks after that)
+ssh -R $WEBHOOK_HOST:443:localhost:5000 serveo.net
+
+# run main app and bot with one command
+python manage.py runserver
 ```
 
 ## Further improvements
