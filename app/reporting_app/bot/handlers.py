@@ -1,5 +1,6 @@
+from ..bot import utils
 from telebot import types
-from ..app import bot, db
+from ..app import bot
 from ..models import Ticket
 
 
@@ -169,16 +170,10 @@ def process_ticket_title_step(m):
             user_dict[chat_id] = {}
         code = user_dict[chat_id]['code']
         bot.send_message(m.chat.id, f'Nice, now we can create ticket "{code}" with title "{title}"')
-        create_ticket(code, title)
+        utils.create_ticket(code, title)
         show_tickets(m)
     except Exception as e:
         bot.reply_to(m, 'ooops')
-
-
-def create_ticket(code, title):
-    t = Ticket(code=code, name=title)
-    db.session.add(t)
-    db.session.commit()
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
@@ -233,7 +228,7 @@ def show_tickets(m):
 def create_tickets_buttons():
     markup = types.InlineKeyboardMarkup()
 
-    tickets = Ticket.query.all()
+    tickets = utils.get_all_tickets()
 
     for ticket in tickets:
         code = ticket.code
