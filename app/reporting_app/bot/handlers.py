@@ -1,8 +1,6 @@
-import os
-from telebot import TeleBot, types
-
-token = os.environ['TELEGRAM_BOT_TOKEN']
-bot = TeleBot(token)
+from telebot import types
+from ..app import bot, db
+from ..models import Ticket
 
 
 SELECT_PROJECT = 'select project'
@@ -102,12 +100,6 @@ commands = {
     'ping': 'Check if bot is responding',
     'help': 'Help'
 }
-TICKETS = [
-    ('CKL-114', 'Add some changes'),
-    ('TEST-3254', 'Fix tests fixtures for unit tests'),
-    ('GMP-478', 'Fix database data'),
-    ('PTSK-1145', 'Realize data science implementation for application\'s core')
-]
 user_dict = {}
 
 
@@ -127,7 +119,7 @@ def help_handler(m):
 
 @bot.message_handler(commands=['ping'])
 def ping_handler(m):
-    bot.reply_to(m, 'Still alive!')
+    bot.reply_to(m, str(len(Ticket.query.all())))
 
 
 @bot.message_handler(commands=['register'])
@@ -149,6 +141,11 @@ def select_project_handler(message):
 def new_ticket_handler(m):
     bot.send_message(m.chat.id, 'Please write ticket code down:')
     bot.register_next_step_handler(m, process_ticket_code_step)
+
+
+@bot.message_handler(commands=['show_tickets'])
+def new_ticket_handler(m):
+    show_tickets(m)
 
 
 def process_ticket_code_step(m):
@@ -179,7 +176,9 @@ def process_ticket_title_step(m):
 
 
 def create_ticket(code, title):
-    TICKETS.append((code, title))
+    t = Ticket(code=code, name=title)
+    db.session.add(t)
+    db.session.commit()
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
@@ -233,8 +232,12 @@ def show_tickets(m):
 
 def create_tickets_buttons():
     markup = types.InlineKeyboardMarkup()
-    for ticket in TICKETS:
-        code, title = ticket
+
+    tickets = Ticket.query.all()
+
+    for ticket in tickets:
+        code = ticket.code
+        title = ticket.name
         button = types.InlineKeyboardButton(f'[{code}] - {title}', callback_data=f'{code}-{TICKET_SUFFIX}')
         markup.add(button)
     return markup
@@ -268,8 +271,3 @@ def send_message(message):
         else:
             message_text = report_setter.get_message()
             bot.send_message(message.chat.id, message_text)
-
-
-if __name__ == '__main__':
-    print('bot is started...')
-    bot.polling()
