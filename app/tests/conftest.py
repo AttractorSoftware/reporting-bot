@@ -1,7 +1,8 @@
-import pytest
-from reporting_app.app import create_app
-from reporting_app.settings import TestConfig
+import pytest, os, sys
+os.environ['ENV'] = 'TEST'
 
-@pytest.yield_fixture(scope='function')
+
+@pytest.fixture
 def app():
-    return create_app(TestConfig)
+    from reporting_app.app import app
+    return app
