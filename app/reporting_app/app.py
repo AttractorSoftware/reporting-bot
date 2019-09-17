@@ -3,7 +3,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
-from .settings import DevConfig as config
+from .settings import configs
 from .admin import init_admin_views
 
 
@@ -21,6 +21,7 @@ bot = telebot.TeleBot(os.environ['TELEGRAM_BOT_TOKEN'])
 migrate = Migrate()
 admin = Admin(name="reporting", template_mode="bootstrap3")
 
+config = configs[os.getenv('ENV', 'DEV')]
 app = Flask(__name__)
 app.config.from_object(config)
 db = SQLAlchemy(app)

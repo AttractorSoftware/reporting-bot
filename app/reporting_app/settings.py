@@ -33,3 +33,9 @@ class TestConfig(Config):
     ENV = 'test'
     TESTING = True
     DEBUG = True
+
+
+configs = {
+    'DEV': DevConfig,
+    'TEST': TestConfig
+}
