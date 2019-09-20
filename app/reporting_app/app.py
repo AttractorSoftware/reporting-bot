@@ -43,4 +43,4 @@ if os.getenv('ENV') != 'TEST':
 logger = telebot.logger
 logger.setLevel(logging.INFO)
 
-from .bot import entrypoint
+from .bot import handlers
