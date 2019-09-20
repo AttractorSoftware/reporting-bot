@@ -6,9 +6,9 @@ class Config(object):
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir))
     DATA_DIR = os.path.join(ROOT, 'data')
-    API_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
+    API_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
-    WEBHOOK_HOST = os.environ['WEBHOOK_HOST']
+    WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
     WEBHOOK_PORT = 443  # 443, 80, 88 or 8443 (port need to be 'open')
     WEBHOOK_LISTEN = '0.0.0.0'  # In some VPS you may need to put here the IP addr
 
