@@ -17,11 +17,11 @@ def run_in_polling_mode(bot):
     bot.polling()
 
 
-bot = telebot.TeleBot(os.environ['TELEGRAM_BOT_TOKEN'])
 migrate = Migrate()
 admin = Admin(name="reporting", template_mode="bootstrap3")
 
 config = configs[os.getenv('ENV', 'DEV')]
+bot = telebot.TeleBot(config.API_TOKEN)
 app = Flask(__name__)
 app.config.from_object(config)
 db = SQLAlchemy(app)
@@ -34,12 +34,13 @@ app.register_blueprint(blueprint)
 from reporting_app import models
 init_admin_views(admin, db, models)
 
-if os.getenv('WEBHOOK_HOST', False):
-    run_in_webhook_mode(bot, config)
-else:
-    run_in_polling_mode(bot)
+if os.getenv('ENV') != 'TEST':
+    if config.WEBHOOK_HOST:
+        run_in_webhook_mode(bot, config)
+    else:
+        run_in_polling_mode(bot)
 
 logger = telebot.logger
 logger.setLevel(logging.INFO)
 
-from .bot import handlers
+from .bot import entrypoint
