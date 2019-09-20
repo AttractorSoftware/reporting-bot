@@ -33,6 +33,7 @@ class TestConfig(Config):
     ENV = 'test'
     TESTING = True
     DEBUG = True
+    API_TOKEN = ''
 
 
 configs = {
