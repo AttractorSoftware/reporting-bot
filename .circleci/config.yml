@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo pip install -r app/dev-requirements.txt
+            sudo pip install -r dev-requirements.txt
       - run:
           name: Run tests
-          command: pytest -svv app/tests --cov=app/reporting_app
+          command: pytest -svv tests --cov=reporting_app
