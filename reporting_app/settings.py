@@ -13,6 +13,7 @@ class Config(object):
 
     WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
     WEBHOOK_URL_PATH = "/%s/" % (API_TOKEN)
+    GOOGLE_CREDENTIAL_FILE = os.path.abspath(os.getenv('GOOGLE_CREDENTIAL_FILE'))
 
 
 class ProdConfig(Config):

@@ -15,7 +15,7 @@ def index():
 
 @blueprint.route('/send-spreadsheet/project/<project>/user/<user>')
 def send_spreadsheet(project, user):
-    report = SendProjectGoogleSpreadSheetUseCase(ReportRepo())
+    report = SendProjectGoogleSpreadSheetUseCase(ReportRepo(), config.GOOGLE_CREDENTIAL_FILE)
     report.execute(project, user)
 
 

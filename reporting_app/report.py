@@ -41,8 +41,9 @@ class ReportRepo(object):
 
 
 class SendProjectGoogleSpreadSheetUseCase(object):
-    def __init__(self, repo):
+    def __init__(self, repo, credentials):
         self.repo = repo
+        self.credentials = credentials
 
     def execute(self, project, user):
         reports = self.repo.get_user_reports_by_project(user, project)
@@ -73,7 +74,7 @@ class SendProjectGoogleSpreadSheetUseCase(object):
         print('reports', reports)
         print('project', project)
         print('user', user)
-        sheet = Spreadsheet('data/reporting-bot-google-api.json')
+        sheet = Spreadsheet(self.credentials)
         spreadsheet_name = self.get_name_of_timesheet(project)
         if sheet.check_exists_file(spreadsheet_name):
             spreadsheet = self.repo.get_project_spread_sheet(project, spreadsheet_name)
