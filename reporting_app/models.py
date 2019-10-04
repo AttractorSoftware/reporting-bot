@@ -81,7 +81,7 @@ class SheetRole(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     sheet_role_type = db.Column(db.String(25), default="writer")
     user = db.relationship('User', foreign_keys='SheetRole.user_id')
-    user = db.relationship('Project', foreign_keys='SheetRole.project_id')
+    project = db.relationship('Project', foreign_keys='SheetRole.project_id')
 
     def __repr__(self):
         return f'<id: {self.id}, filename: {self.filename}>'

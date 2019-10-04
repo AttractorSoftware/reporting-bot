@@ -83,7 +83,6 @@ class Spreadsheet:
             self.drive_service = apiclient.discovery.build('drive', 'v3', http=self.http_auth)
         response = self.drive_service.files().list(q=f"name='{spreadsheet_filename}'").execute()
         files = response.get('files', [])
-        print('files---: ', files)
         return len(files) > 0
 
     def get_sheet_url(self):
@@ -250,24 +249,3 @@ class Spreadsheet:
                                                        for row_formats in formats_json],
                                               "fields": fields}})
 
-
-if __name__ == "__main__":
-    CREDENTIALS_FILE = 'data/reporting-bot-google-api.json'
-    sheet = Spreadsheet(CREDENTIALS_FILE)
-    sheet.set_spread_sheet_by_id('1AtVZBWVerxmlxNJCRmOSS_bDj1XdRWYMkIp1OLjI07U')
-    # sheet.share_with_email_for_writing('aibek.abdykasymov@gmail.com')
-    # sheet.share_with_email_for_writing('andrewshmelyov@gmail.com')
-    print('sheet url is: ', sheet.get_sheet_url())
-    # sheet.prepare_set_values("A1:E1", [['Date', 'Name', 'Task', 'Hours', 'Code']])
-    # sheet.prepare_set_cells_format("A1:E1", {"textFormat": {"bold": True}})
-    # reports = [
-    #     ['2.5.2015', 'First User', 'Create data access layer to database', 647, 'CODE-145'],
-    #     ['3.5.2015', 'Second User', 'Create data access layer to database', 47, 'CODE-145'],
-    # ]
-    # sheet.prepare_set_values("A2:E3", reports)
-    # sheet.run_prepared()
-    sheet.rename_sheet('first')
-    sheets = sheet.get_spreadsheet_sheets()
-    print('sheets ', sheets)
-    print('is exists: ', sheet.check_exitst_file('test_report'))
-    # google_api.show_files()

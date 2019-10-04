@@ -34,6 +34,7 @@ class TestConfig(Config):
     TESTING = True
     DEBUG = True
     API_TOKEN = ''
+    GOOGLE_CREDENTIAL_FILE = os.path.join(Config.PROJECT_ROOT, 'tests/fixtures/json_credential_key.json')
 
 
 configs = {

@@ -112,3 +112,17 @@ test_data
 .idea
 .vscode
 .devcontainer
+
+
+#frontend
+ 
+.DS_Store
+node_modules
+npm-debug.log
+dist
+public/bundle.*
+.vs_code
+.vscode
+.idea
+data
+package-lock.json

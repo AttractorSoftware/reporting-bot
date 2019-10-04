@@ -13,10 +13,11 @@ def index():
     return 'Hello World'
 
 
-@blueprint.route('/send-spreadsheet/project/<project>/user/<user>')
-def send_spreadsheet(project, user):
+@blueprint.route('/send-spreadsheet/project/<project_id>/user/<user_id>')
+def send_spreadsheet(project_id, user_id):
     report = SendProjectGoogleSpreadSheetUseCase(ReportRepo(), config.GOOGLE_CREDENTIAL_FILE)
-    report.execute(project, user)
+    report.execute(project_id, user_id)
+    return 'Created'
 
 
 @blueprint.route(config.WEBHOOK_URL_PATH, methods=['POST'])
