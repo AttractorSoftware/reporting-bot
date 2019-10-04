@@ -16,7 +16,6 @@
 pip install -r app/dev-requirements.txt
 
 # create database (only first time, in development mode creates sqlite3 file) before go to app directory
-cd app
 python manage.py db init
 
 # initialize new migrations (the command creates new migrations file)
