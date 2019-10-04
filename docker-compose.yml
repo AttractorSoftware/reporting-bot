@@ -16,6 +16,9 @@ services:
     depends_on:
       - db
   db:
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
     image: postgres:10.10-alpine
     restart: always
     environment:
