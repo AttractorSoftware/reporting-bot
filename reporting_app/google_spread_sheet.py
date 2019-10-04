@@ -41,7 +41,7 @@ class Spreadsheet:
         self.value_ranges = []
 
     # Creates new spreadsheet
-    def create(self, title, sheet_title, rows=1000, cols=26, locale='en_US', time_zone='Etc/GMT'):
+    def create(self, title, sheet_title="first", rows=1000, cols=26, locale='en_US', time_zone='Etc/GMT'):
         spreadsheet = self.service.spreadsheets().create(body={
             'properties': {'title': title, 'locale': locale, 'timeZone': time_zone},
             'sheets': [{'properties': {'sheetType': 'GRID', 'sheetId': 0, 'title': sheet_title,
@@ -78,12 +78,20 @@ class Spreadsheet:
     def share_with_anybody_for_writing(self):
         self.share({'type': 'anyone', 'role': 'writer'})
 
+    def check_exists_file(self, spreadsheet_filename):
+        if self.drive_service is None:
+            self.drive_service = apiclient.discovery.build('drive', 'v3', http=self.http_auth)
+        response = self.drive_service.files().list(q=f"name='{spreadsheet_filename}'").execute()
+        files = response.get('files', [])
+        print('files---: ', files)
+        return len(files) > 0
+
     def get_sheet_url(self):
         if self.spread_sheet_id is None:
             raise SpreadsheetNotSetError()
         if self.sheet_id is None:
             raise SheetNotSetError()
-        return 'https://docs.google.com/spreadsheets/d/' + self.spread_sheet_id + '/edit#gid=' + str(self.sheet_id)
+        return f'https://docs.google.com/spreadsheets/d/{self.spread_sheet_id}/edit#gid={str(self.sheet_id)}'
 
     # Sets current spreadsheet by id; set current sheet as first sheet of this spreadsheet
     def set_spread_sheet_by_id(self, spread_sheet_id):
@@ -135,6 +143,44 @@ class Spreadsheet:
         self.sheet_id = added_sheet['sheetId']
         self.sheet_title = added_sheet['title']
         return self.sheet_id
+
+    def prepare_rename_sheet(self, new_title):
+        self.requests.append({
+            "updateSheetProperties": {
+                "properties": {
+                    "sheetId": self.sheet_id,
+                    "title": new_title,
+                },
+                "fields": "title"
+            }
+        })
+
+    def rename_sheet(self, new_title):
+        if self.spread_sheet_id is None:
+            raise SpreadsheetNotSetError()
+        self.prepare_rename_sheet(new_title)
+        self.run_prepared()
+        self.sheet_title = new_title
+        return self.sheet_id
+
+    def get_spreadsheet_sheets(self):
+        spreadsheet = self.service.spreadsheets().get(spreadsheetId=self.spread_sheet_id).execute()
+        sheets = spreadsheet['sheets']
+        return sheets
+
+    def get_sheet_by_property(self, sheet_prop, comparison_value):
+        sheets = self.get_spreadsheet_sheets()
+        sheet = None
+        for sh in sheets:
+            if sh['properties'][sheet_prop] == comparison_value:
+                sheet = sh['properties']
+                break
+        return sheet
+
+    def set_sheet_by_title(self, sheet_title):
+        sheet = self.get_sheet_by_property('title', sheet_title)
+        self.sheet_id = sheet['sheetId']
+        self.sheet_title = sheet['title']
 
     # Converts string range to GridRange of current sheet; examples:
     # "A3:B4"-> {sheetId: id of current sheet, startRowIndex: 2, endRowIndex: 4, startColumnIndex: 0, endColumnIndex: 2}
@@ -209,8 +255,19 @@ if __name__ == "__main__":
     CREDENTIALS_FILE = 'data/reporting-bot-google-api.json'
     sheet = Spreadsheet(CREDENTIALS_FILE)
     sheet.set_spread_sheet_by_id('1AtVZBWVerxmlxNJCRmOSS_bDj1XdRWYMkIp1OLjI07U')
-    sheet.share_with_email_for_writing('aibek.abdykasymov@gmail.com')
-    sheet.share_with_email_for_writing('andrewshmelyov@gmail.com')
+    # sheet.share_with_email_for_writing('aibek.abdykasymov@gmail.com')
+    # sheet.share_with_email_for_writing('andrewshmelyov@gmail.com')
     print('sheet url is: ', sheet.get_sheet_url())
-
+    # sheet.prepare_set_values("A1:E1", [['Date', 'Name', 'Task', 'Hours', 'Code']])
+    # sheet.prepare_set_cells_format("A1:E1", {"textFormat": {"bold": True}})
+    # reports = [
+    #     ['2.5.2015', 'First User', 'Create data access layer to database', 647, 'CODE-145'],
+    #     ['3.5.2015', 'Second User', 'Create data access layer to database', 47, 'CODE-145'],
+    # ]
+    # sheet.prepare_set_values("A2:E3", reports)
+    # sheet.run_prepared()
+    sheet.rename_sheet('first')
+    sheets = sheet.get_spreadsheet_sheets()
+    print('sheets ', sheets)
+    print('is exists: ', sheet.check_exitst_file('test_report'))
     # google_api.show_files()

@@ -8,7 +8,7 @@ from .admin import init_admin_views
 
 
 def run_in_webhook_mode(bot, config):
-    bot.remove_webhook()
+    # bot.remove_webhook()
     time.sleep(0.1)
     bot.set_webhook(url=config.WEBHOOK_URL_BASE + config.WEBHOOK_URL_PATH)
 
@@ -31,8 +31,9 @@ admin.init_app(app)
 
 from .routes import blueprint
 app.register_blueprint(blueprint)
-from reporting_app import models
+from . import models
 init_admin_views(admin, db, models)
+
 
 if os.getenv('ENV') != 'TEST':
     if config.WEBHOOK_HOST:

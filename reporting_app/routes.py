@@ -1,7 +1,9 @@
 from flask import Blueprint, request, abort
 from telebot import types
 from .settings import DevConfig as config
-from .app import bot
+from . import bot
+from .report import ReportRepo, SendProjectGoogleSpreadSheetUseCase
+
 
 blueprint = Blueprint('reporting_app', __name__)
 
@@ -9,6 +11,12 @@ blueprint = Blueprint('reporting_app', __name__)
 @blueprint.route('/')
 def index():
     return 'Hello World'
+
+
+@blueprint.route('/send-spreadsheet/project/<project>/user/<user>')
+def send_spreadsheet(project, user):
+    report = SendProjectGoogleSpreadSheetUseCase(ReportRepo())
+    report.execute(project, user)
 
 
 @blueprint.route(config.WEBHOOK_URL_PATH, methods=['POST'])

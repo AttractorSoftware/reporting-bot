@@ -4,8 +4,7 @@ import os
 class Config(object):
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
-    ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir))
-    DATA_DIR = os.path.join(ROOT, 'data')
+    DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
     API_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
     WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
